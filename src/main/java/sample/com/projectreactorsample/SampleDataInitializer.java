@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import sample.com.projectreactorsample.Repository.ReservationRepository;
+import sample.com.projectreactorsample.config.ReservationConfig;
 import sample.com.projectreactorsample.model.Reservation;
 
 import java.util.function.Consumer;
@@ -18,9 +19,11 @@ import java.util.function.Consumer;
 public class SampleDataInitializer {
 
   private final ReservationRepository repository;
+  private final ReservationConfig config;
 
   @EventListener(ApplicationReadyEvent.class)
   public void ready() {
+    log.info("SampleDataInitializer: "+config);
     Flux<Reservation> reservations =
         Flux.just("Madhura", "Josh", "Olga", "Marcin", "Violetta", "Ria", "Stephan", "Dr. Syer")
         .map(name -> new Reservation(null, name))
@@ -31,6 +34,5 @@ public class SampleDataInitializer {
        .thenMany(reservations)
        .thenMany(this.repository.findAll())
        .subscribe(log::info);
-
   }
 }
